@@ -11988,7 +11988,7 @@
 											"width": 361.00390625,
 											"height": 13,
 											"underline": true,
-											"text": "+getKeywordsArray(keywords: ArrayList<String>)",
+											"text": "+getKeywordsArray(): ArrayList<String>",
 											"horizontalAlignment": 0
 										}
 									],
@@ -13678,12 +13678,12 @@
 											"_parent": {
 												"$ref": "AAAAAAFvMPYyEQswshk="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 1077,
 											"top": 661,
 											"width": 300.193359375,
-											"height": 13,
-											"text": "«BoundService»"
+											"height": 13
 										},
 										{
 											"_type": "LabelView",
@@ -13693,10 +13693,10 @@
 											},
 											"font": "Arial;13;1",
 											"left": 1077,
-											"top": 676,
+											"top": 663,
 											"width": 300.193359375,
 											"height": 13,
-											"text": "NotificationService"
+											"text": "NotificationManager"
 										},
 										{
 											"_type": "LabelView",
@@ -13730,7 +13730,7 @@
 									"left": 1072,
 									"top": 656,
 									"width": 310.193359375,
-									"height": 38,
+									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAFvMPYyEQsxhVA="
 									},
@@ -13765,7 +13765,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 1077,
-											"top": 699,
+											"top": 686,
 											"width": 300.193359375,
 											"height": 13,
 											"text": "-newPrograms: ArrayList<Program>",
@@ -13782,7 +13782,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 1077,
-											"top": 714,
+											"top": 701,
 											"width": 300.193359375,
 											"height": 13,
 											"text": "-keywords: ArrayList<String>",
@@ -13791,7 +13791,7 @@
 									],
 									"font": "Arial;13;0",
 									"left": 1072,
-									"top": 694,
+									"top": 681,
 									"width": 310.193359375,
 									"height": 38
 								},
@@ -13816,7 +13816,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 1077,
-											"top": 737,
+											"top": 724,
 											"width": 300.193359375,
 											"height": 13,
 											"text": "+callWhenProgramListChanged()",
@@ -13833,7 +13833,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 1077,
-											"top": 752,
+											"top": 739,
 											"width": 300.193359375,
 											"height": 13,
 											"text": "-showAlarm()",
@@ -13850,7 +13850,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 1077,
-											"top": 767,
+											"top": 754,
 											"width": 300.193359375,
 											"height": 13,
 											"text": "-checkNewProgramMatchToKeywords(): boolean",
@@ -13859,7 +13859,7 @@
 									],
 									"font": "Arial;13;0",
 									"left": 1072,
-									"top": 732,
+									"top": 719,
 									"width": 310.193359375,
 									"height": 53
 								},
@@ -14010,100 +14010,6 @@
 							},
 							"propertyLabel": {
 								"$ref": "AAAAAAFvMPaw8ww50fw="
-							}
-						},
-						{
-							"_type": "UMLDependencyView",
-							"_id": "AAAAAAFvMQFMyeCT5Fo=",
-							"_parent": {
-								"$ref": "AAAAAAFvJoslw1XOqJw="
-							},
-							"model": {
-								"$ref": "AAAAAAFvMQFMyeCRr4w="
-							},
-							"subViews": [
-								{
-									"_type": "EdgeLabelView",
-									"_id": "AAAAAAFvMQFMyeCUHHc=",
-									"_parent": {
-										"$ref": "AAAAAAFvMQFMyeCT5Fo="
-									},
-									"model": {
-										"$ref": "AAAAAAFvMQFMyeCRr4w="
-									},
-									"visible": false,
-									"font": "Arial;13;0",
-									"left": 994,
-									"top": 927,
-									"height": 13,
-									"alpha": 1.5707963267948966,
-									"distance": 15,
-									"hostEdge": {
-										"$ref": "AAAAAAFvMQFMyeCT5Fo="
-									},
-									"edgePosition": 1
-								},
-								{
-									"_type": "EdgeLabelView",
-									"_id": "AAAAAAFvMQFMyuCVvfc=",
-									"_parent": {
-										"$ref": "AAAAAAFvMQFMyeCT5Fo="
-									},
-									"model": {
-										"$ref": "AAAAAAFvMQFMyeCRr4w="
-									},
-									"visible": null,
-									"font": "Arial;13;0",
-									"left": 988,
-									"top": 941,
-									"height": 13,
-									"alpha": 1.5707963267948966,
-									"distance": 30,
-									"hostEdge": {
-										"$ref": "AAAAAAFvMQFMyeCT5Fo="
-									},
-									"edgePosition": 1
-								},
-								{
-									"_type": "EdgeLabelView",
-									"_id": "AAAAAAFvMQFMyuCW9lY=",
-									"_parent": {
-										"$ref": "AAAAAAFvMQFMyeCT5Fo="
-									},
-									"model": {
-										"$ref": "AAAAAAFvMQFMyeCRr4w="
-									},
-									"visible": false,
-									"font": "Arial;13;0",
-									"left": 1005,
-									"top": 900,
-									"height": 13,
-									"alpha": -1.5707963267948966,
-									"distance": 15,
-									"hostEdge": {
-										"$ref": "AAAAAAFvMQFMyeCT5Fo="
-									},
-									"edgePosition": 1
-								}
-							],
-							"font": "Arial;13;0",
-							"head": {
-								"$ref": "AAAAAAFvJo3g8lcjgc4="
-							},
-							"tail": {
-								"$ref": "AAAAAAFvMPYyEQsvTK4="
-							},
-							"lineStyle": 1,
-							"points": "1153:785;1000:920;620:770",
-							"showVisibility": true,
-							"nameLabel": {
-								"$ref": "AAAAAAFvMQFMyeCUHHc="
-							},
-							"stereotypeLabel": {
-								"$ref": "AAAAAAFvMQFMyuCVvfc="
-							},
-							"propertyLabel": {
-								"$ref": "AAAAAAFvMQFMyuCW9lY="
 							}
 						},
 						{
@@ -14714,7 +14620,7 @@
 											"font": "Arial;13;0",
 											"left": -960,
 											"top": 304,
-											"width": 80.9072265625,
+											"width": 85.28076171875,
 											"height": 13,
 											"text": "(from Model2)"
 										},
@@ -15461,7 +15367,8 @@
 										"$ref": "AAAAAAFvMO/hswe6yu4="
 									},
 									"name": "keywords",
-									"type": "ArrayList<String>"
+									"type": "ArrayList<String>",
+									"direction": "return"
 								}
 							]
 						}
@@ -15849,7 +15756,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFvJoslw1XNm2k="
 					},
-					"name": "NotificationService",
+					"name": "NotificationManager",
 					"ownedElements": [
 						{
 							"_type": "UMLDependency",
@@ -15932,7 +15839,7 @@
 							}
 						}
 					],
-					"stereotype": "BoundService",
+					"stereotype": "",
 					"attributes": [
 						{
 							"_type": "UMLAttribute",
@@ -16025,7 +15932,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFviTl6mSsBqQ0="
 							},
-							"name": "DATABASE_VERSION"
+							"name": "DATABASE_VERSION",
+							"type": ""
 						}
 					],
 					"operations": [

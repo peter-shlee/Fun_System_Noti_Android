@@ -22,8 +22,8 @@ public class ParsingFunSystemService extends Service {
     private Messenger messengerService = null;
     private MsgRequestHandler msgRequestHandler = null;
 
-    private String funSystemURL = "https://fun.ssu.ac.kr/ko/program/all";
-    private String funSystemProgramListPath = funSystemURL + "/list/all/";
+    private String funSystemURL = "https://fun.ssu.ac.kr";
+    private String funSystemProgramListPath = funSystemURL + "/ko/program/all/list/all/";
 
     static final int REQUEST_MSG_PROGRAM_LIST = 1000;
     static final int RESPONSE_MSG_PROGRAM_LIST = 2000;

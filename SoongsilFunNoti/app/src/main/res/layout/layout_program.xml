@@ -2,6 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="3dp"
+    android:layout_marginLeft="3dp"
+    android:layout_marginRight="3dp"
+    android:background="#FFFF"
     android:padding="8dp">
 
     <TextView
@@ -9,54 +13,49 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="부서"
-        android:paddingTop="8dp"
+        android:paddingTop="12dp"
         android:paddingLeft="8dp"
-        android:textSize="16dp"/>
+        android:paddingBottom="2dp"
+        android:textSize="16dp"
+        android:textColor="#454545"/>
 
     <TextView
         android:id="@+id/text_program_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_department"
-        android:paddingTop="8dp"
         android:paddingLeft="8dp"
         android:textSize="20dp"
         android:text="프로그램 제목"/>
 
     <TextView
-        android:id="@+id/text_start_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/text_wave_dash"
-        android:layout_below="@id/text_program_title"
-        android:text="0000.00.00()"/>
-
-    <TextView
-        android:id="@+id/text_wave_dash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/text_end_date"
-        android:layout_below="@id/text_program_title"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:text="~"/>
-
-    <TextView
-        android:id="@+id/text_end_date"
+        android:id="@+id/text_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/text_program_title"
         android:paddingRight="8dp"
-        android:text="0000.00.00()"/>
+        android:paddingTop="4dp"
+        android:text="0000.00.00() ~ 0000.00.00()"/>
 
     <TextView
-        android:id="@+id/text_D-Day"
+        android:id="@+id/text_D_Day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:text="D-n"
+        android:textStyle="bold"
         android:paddingRight="8dp"
         android:textSize="20dp"/>
+
+    <TextView
+        android:id="@+id/text_url"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+    <TextView
+        android:id="@+id/text_remaining_date"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
 
 </RelativeLayout>

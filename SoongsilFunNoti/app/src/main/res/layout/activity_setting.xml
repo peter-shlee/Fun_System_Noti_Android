@@ -2,12 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#006e93">
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="알림 설정"
+        android:textSize="20dp"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="#00a7cb"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
         android:orientation="horizontal"
+        android:background="#FFFF"
         android:padding="8dp">
 
         <RelativeLayout
@@ -64,46 +79,54 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_weight="1"
+        android:background="#FFFF">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="키워드"
-            android:textSize="20dp"/>
+            android:orientation="horizontal">
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="키워드"
+                android:textSize="20dp"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="추가"/>
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
-    </LinearLayout>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="추가"/>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingRight="8dp"
-        android:paddingBottom="8dp"
-        android:paddingLeft="16dp">
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linear_layout_keywords"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginLeft="12dp"
+            android:paddingBottom="1dp"
+            android:orientation="vertical"
+            android:background="#006e93">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginTop="1dp"
+                android:orientation="horizontal"
+                android:background="#FFFF">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -127,7 +150,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginTop="1dp"
+                android:orientation="horizontal"
+                android:background="#FFFF">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -150,6 +175,6 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,92 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relative_layout_programs"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#006e93">
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/text_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:layout_height="48dp"
+        android:text="숭실대학교 펀시스템"
+        android:textSize="20dp"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="#00a7cb"/>
 
-        <TextView
-            android:id="@+id/text_department"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="부서"
-            android:paddingTop="8dp"
-            android:paddingLeft="8dp"
-            android:textSize="16dp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_programs"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/text_title"
+        android:paddingBottom="3dp"/>
 
-        <TextView
-            android:id="@+id/text_program_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_department"
-            android:paddingTop="8dp"
-            android:paddingLeft="8dp"
-            android:textSize="20dp"
-            android:text="프로그램 제목"/>
-
-        <TextView
-            android:id="@+id/text_start_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/text_wave_dash"
-            android:layout_below="@id/text_program_title"
-            android:text="0000.00.00()"/>
-
-        <TextView
-            android:id="@+id/text_wave_dash"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/text_end_date"
-            android:layout_below="@id/text_program_title"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:text="~"/>
-
-        <TextView
-            android:id="@+id/text_end_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/text_program_title"
-            android:paddingRight="8dp"
-            android:text="0000.00.00()"/>
-
-        <TextView
-            android:id="@+id/text_D-Day"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="D-n"
-            android:paddingRight="8dp"
-            android:textSize="20dp"/>
-
-    </RelativeLayout>
-
-    <Space
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:layout_alignBottom="@id/text_title"
+        android:layout_alignRight="@id/text_title"
+        android:text="설정"
+        android:onClick="onSettingButtonClick"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="설정"/>
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

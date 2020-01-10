@@ -7,11 +7,13 @@ import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.os.ResultReceiver;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -28,6 +30,8 @@ public class ProgramsManagementService extends Service {
 
     private static final int REQUEST_MSG_PROGRAM_LIST = 1000;
     private static final int RESPONSE_MSG_PROGRAM_LIST = 2000;
+    private static final int RESPONSE_MSG_TO_MAIN_ACTIVITY = 3000;
+
     private Messenger messengerService;
     private MsgResponseHandler messengerResponseHandler = null;
     private Messenger messengerResponse;
@@ -36,6 +40,8 @@ public class ProgramsManagementService extends Service {
     private HashSet<Program> addedProgramHashSet;
 
     private final Binder binder = new LocalBinder();
+
+    private Intent startingIntent;
 
     public class LocalBinder extends Binder {
         ProgramsManagementService ProgramsManagementService() {return ProgramsManagementService.this;}
@@ -58,6 +64,7 @@ public class ProgramsManagementService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("ProgramsManagementService", "------------------------------------------------ProgramDBHelper onStartCommand");
+        startingIntent = intent;
         return START_STICKY;
     }
 
@@ -117,6 +124,14 @@ public class ProgramsManagementService extends Service {
                     Collections.sort(list);
                     for(Object o : list2){
                         Log.i("ProgramsManagementService", "----------------------------------------------------------------" + ((Program)o).getTitle());
+                    }
+
+                    // 메인 액티비티 화면 갱신 요구
+                    if(ref.get().startingIntent != null){
+                        Bundle  bundle = new Bundle();
+                        final ResultReceiver receiver = ref.get().startingIntent.getParcelableExtra("RECEIVER");
+                        bundle.putString("msg", "Parsing Complete!");
+                        receiver.send(RESPONSE_MSG_TO_MAIN_ACTIVITY, bundle);
                     }
 
                     break;
@@ -183,6 +198,7 @@ public class ProgramsManagementService extends Service {
     private void setProgramHashSet(HashSet<Program> programHashSet){
         this.programHashSet = programHashSet;
         saveProgramsAtDB();
+        Log.i("ProgramsManagementService", "------------------------------------------------프로그램 목록 업데이트됨");
     }
 
     private void updateProgramHashSet(HashSet<Program> newProgramHashSet){
@@ -202,11 +218,18 @@ public class ProgramsManagementService extends Service {
         setProgramHashSet(newProgramHashSet);
     }
 
-    private final HashSet<Program> getAddedProgramHashSet() {
+    private HashSet<Program> getAddedProgramHashSet() {
         return addedProgramHashSet;
     }
 
-    private final HashSet<Program> getProgramHashSet(){
+    public HashSet<Program> getProgramHashSet(){
         return programHashSet;
+    }
+
+    public ArrayList<Program> getProgramArrayList(){
+        List list = new ArrayList<>(getProgramHashSet());
+        Collections.sort(list);
+
+        return new ArrayList<>(list);
     }
 }
