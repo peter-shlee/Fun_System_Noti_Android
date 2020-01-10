@@ -1,5 +1,6 @@
 package com.shlee.soongsilfunnoti;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,11 +14,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     ProgramsManagementService programsManagementService = null;
 
     RecyclerView recyclerView;
-    ProgramsAdapter adapter;
     ArrayList<Program> programArrayList;
 
     private ServiceConnection connection = new ServiceConnection() {
@@ -87,7 +87,26 @@ public class MainActivity extends AppCompatActivity {
         startService(serviceIntent);
         bindService(serviceIntent,connection,0);
 
+        getSupportActionBar().setTitle("숭실대 펀시스템");
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.action_setting){
+            Intent intent = new Intent(this, SettingActivity.class);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -104,10 +123,10 @@ public class MainActivity extends AppCompatActivity {
         if(programArrayList == null) programArrayList = new ArrayList<>();
         // 리사이클러뷰에 LinearLayoutManager 객체 지정
         recyclerView = findViewById(R.id.recycler_programs);
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // 리사이클러뷰에 ProgramsAdapter 객체 지정.
-        adapter = new ProgramsAdapter(programArrayList);
+        ProgramsAdapter adapter = new ProgramsAdapter(programArrayList);
         adapter.setOnItemClickListener(
                 new ProgramsAdapter.OnItemClickListner() {
                     @Override
@@ -152,9 +171,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-
-    public void onSettingButtonClick(View view){
-        Intent intent = new Intent(this, SettingActivity.class);
-        startActivity(intent);
-    }
 }

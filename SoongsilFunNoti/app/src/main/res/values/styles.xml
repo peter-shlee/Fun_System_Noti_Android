@@ -7,9 +7,6 @@
         <item name="colorPrimaryDark">#00a7cb</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">#00222e</item>
-
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
     </style>
 
 </resources>
