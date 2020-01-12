@@ -2,10 +2,12 @@ package com.shlee.soongsilfunnoti;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +36,7 @@ public class ProgramsAdapter extends RecyclerView.Adapter<ProgramsAdapter.ViewHo
         TextView d_day;
         TextView url;
         TextView remainingDate;
+        RelativeLayout background;
 
         ViewHolder(View itemView){
             super(itemView);
@@ -45,6 +48,7 @@ public class ProgramsAdapter extends RecyclerView.Adapter<ProgramsAdapter.ViewHo
             d_day = itemView.findViewById(R.id.text_D_Day);
             url = itemView.findViewById(R.id.text_url);
             remainingDate = itemView.findViewById(R.id.text_remaining_date);
+            background = itemView.findViewById(R.id.relative_layout_program);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -88,6 +92,8 @@ public class ProgramsAdapter extends RecyclerView.Adapter<ProgramsAdapter.ViewHo
         holder.date.setText(program.getDate());
         holder.url.setText(program.getURL());
         holder.remainingDate.setText(String.valueOf(program.getRemainingDate()));
+        if(program.isHighlight()) holder.background.setBackgroundColor(Color.parseColor("#62c6c6"));
+        else holder.background.setBackgroundColor(Color.WHITE);
     }
 
     // 전체 데이터 갯수 리턴

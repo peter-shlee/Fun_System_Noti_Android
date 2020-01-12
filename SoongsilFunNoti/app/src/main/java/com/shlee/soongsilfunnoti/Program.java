@@ -12,6 +12,7 @@ public class Program implements Comparable {
     private String title;
     private String date;
     private int remainingDate;
+    private boolean highlight;
 
     public Program( String title, String department,String date, String d_day, String programURL){
         setTitle(title);
@@ -19,15 +20,16 @@ public class Program implements Comparable {
         setDepartment(department);
         setDate(date);
         setURL(programURL);
+        setHighlight(false);
     }
 
     public Program(){
-
+        setHighlight(false);
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        Log.i("Program", "--------------------------------------------------equals");
+        //Log.i("Program", "--------------------------------------------------equals");
         return (title.equals(((Program)obj).getTitle()) && date.equals(((Program)obj).getDate()));
     }
 
@@ -58,6 +60,7 @@ public class Program implements Comparable {
     String getDepartment() { return department; }
     String getURL() { return url; }
     String getTitle() { return title; }
+    boolean isHighlight() { return highlight;}
     int getRemainingDate() {return remainingDate;}
 
     void setD_day(String d_day){
@@ -77,6 +80,7 @@ public class Program implements Comparable {
     void setDepartment(String department){ this.department = department; }
     void setURL(String programURL){ this.url = programURL; }
     void setTitle(String title){ this.title = title; }
+    void setHighlight(boolean highlight){this.highlight = highlight;}
     private void setRemainingDate(int remainingDate){ this.remainingDate = remainingDate; }
 
 }

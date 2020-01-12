@@ -16,6 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 
 public class ParsingFunSystemService extends Service {
@@ -76,11 +77,11 @@ public class ParsingFunSystemService extends Service {
                 }
 
                 Program program = new Program();
-                program.setD_day(funSystemProgramHTML.select("label").select("b").text().split(" ")[0]);
-                program.setDate(funSystemProgramHTML.select(".detail").select(".content").select("small").text());
-                program.setDepartment(funSystemProgramHTML.select(".detail").select(".content").select("label").text());
-                program.setURL(funSystemURL + funSystemProgramHTML.attr("href"));
-                program.setTitle(funSystemProgramHTML.select(".detail").select(".content").select(".title").text());
+                program.setD_day(new String(funSystemProgramHTML.select("label").select("b").text().split(" ")[0].getBytes(StandardCharsets.UTF_8)));
+                program.setDate(new String(funSystemProgramHTML.select(".detail").select(".content").select("small").text().getBytes(StandardCharsets.UTF_8)));
+                program.setDepartment(new String(funSystemProgramHTML.select(".detail").select(".content").select("label").text().getBytes(StandardCharsets.UTF_8)));
+                program.setURL(funSystemURL + new String(funSystemProgramHTML.attr("href").getBytes(StandardCharsets.UTF_8)));
+                program.setTitle(new String(funSystemProgramHTML.select(".detail").select(".content").select(".title").text().getBytes(StandardCharsets.UTF_8)));
 
                 programHashSet.add(program);
             }

@@ -7,7 +7,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class KeywordsManager {
     private Context context;
@@ -16,7 +15,7 @@ public class KeywordsManager {
         this.context = context;
     }
 
-    public void addKeyword(String keyword){
+    synchronized public void addKeyword(String keyword){
         KeywordsDBHelper helper = new KeywordsDBHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
         // 중복체크
@@ -28,7 +27,7 @@ public class KeywordsManager {
         db.close();
     }
 
-    public void deleteKeyword(String keyword){
+    synchronized public void deleteKeyword(String keyword){
         KeywordsDBHelper helper = new KeywordsDBHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -37,7 +36,7 @@ public class KeywordsManager {
         db.close();
     }
 
-    public ArrayList<String> getKeywordArray(){
+    synchronized public ArrayList<String> getKeywordArray(){
         Log.i("KeywordsManager","------------------------------------------getKeywordArray");
         KeywordsDBHelper helper = new KeywordsDBHelper(context);
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -47,7 +46,7 @@ public class KeywordsManager {
 
         while(cursor.moveToNext()){
             keywordArray.add(cursor.getString(0));
-            Log.i("KeywordsManager","------------------------------------------keywordArray");
+            //Log.i("KeywordsManager","------------------------------------------keywordArray");
         }
 
         Collections.sort(keywordArray);

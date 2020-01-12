@@ -10,6 +10,7 @@ import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,23 +19,41 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class SettingActivity extends AppCompatActivity {
+public class SettingActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
     AlertDialog addKeywordDialog;
     ArrayList<String> keywordArrayList;
     RecyclerView recyclerView;
     KeywordsManager keywordsManager;
 
+    Switch alarmOnOffSwitch;
+    boolean isAlarmON;
+    SharedPreferences settingSharedPreferences;
+    TextView alarmOn;
+    TextView alarmOff;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+
+        alarmOn = findViewById(R.id.text_notification_on);
+        alarmOff = findViewById(R.id.text_notification_off);
+
+        settingSharedPreferences = new SettingSharedPreferences(this).getSettingSharedPreferences();
+
+        alarmOnOffSwitch = findViewById(R.id.switch_alarm_on_off);
+        alarmOnOffSwitch.setOnCheckedChangeListener(this);
+        isAlarmON = settingSharedPreferences.getBoolean("isAlarmON", false);
+        alarmOnOffSwitch.setChecked(isAlarmON);
 
         getSupportActionBar().setTitle("알림 설정");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -44,13 +63,33 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if(buttonView == alarmOnOffSwitch){
+            isAlarmON = isChecked; // 알림 ON인지 OFF인지 저장
+
+            if(isChecked){
+                alarmOn.setVisibility(View.VISIBLE);
+                alarmOff.setVisibility(View.INVISIBLE);
+            } else{
+                alarmOn.setVisibility(View.INVISIBLE);
+                alarmOff.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         if(id == android.R.id.home){
             finish();
         } else if(id == R.id.action_save){
+            SharedPreferences.Editor editor = settingSharedPreferences.edit();
+            editor.putBoolean("isAlarmON", isAlarmON);
+            editor.apply();
 
+            Log.i("SettingActivity", "----------------------------------------------------------------R.id.action_save : " + isAlarmON);
+            Toast.makeText(this, "알림 설정이 저장되었습니다.", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);

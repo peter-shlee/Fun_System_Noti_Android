@@ -36,6 +36,7 @@
                 android:paddingLeft="8dp"
                 android:paddingBottom="8dp"
                 android:visibility="invisible"
+                android:textColor="#62c6c6"
                 android:text="ON"/>
 
             <TextView
@@ -46,6 +47,7 @@
                 android:paddingLeft="8dp"
                 android:paddingBottom="8dp"
                 android:visibility="visible"
+                android:textColor="#bebfbf"
                 android:text="OFF"/>
 
         </RelativeLayout>
@@ -58,11 +60,13 @@
             android:layout_weight="1"/>
 
         <Switch
+            android:id="@+id/switch_alarm_on_off"
+            android:track="@drawable/switch_track_selector"
+            android:thumb="@drawable/switch_thumb"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:layout_gravity="center"
-            android:textSize="20dp"
-            android:padding="8dp"/>
+            android:paddingRight="16dp"/>
 
     </LinearLayout>
 
