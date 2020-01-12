@@ -207,7 +207,7 @@ public class ProgramsManagementService extends Service {
         long lastUpdateTime = sharedPreferences.getLong("lastUpdateTime", 0);
         long currentTime = System.currentTimeMillis();
 
-        if(currentTime - lastUpdateTime >= 1740000 || isCalledFromMainActivity){
+        if(currentTime - lastUpdateTime >= 1700000 || isCalledFromMainActivity){
             Log.i("ProgramsManagementService", "---------------------------------------------updateFunSystemPrograms()****************************** " + (serviecCount++));
             Message msg = Message.obtain(null, REQUEST_MSG_PROGRAM_LIST);
             msg.replyTo = messengerResponse;
@@ -220,6 +220,17 @@ public class ProgramsManagementService extends Service {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putLong("lastUpdateTime",currentTime);
             editor.apply();
+
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {//OREO API 26 미만에서
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateFunSystemPrograms(false);
+                    }
+                }, 1740000);
+            }
+
         }
 
         if(startingIntent.getBooleanExtra("isCalledFromDeviceBootReceiveService", false)){
