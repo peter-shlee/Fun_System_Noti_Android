@@ -76,6 +76,16 @@ public class ProgramsManagementService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("ProgramsManagementService", "------------------------------------------------ProgramDBHelper onStartCommand");
         startingIntent = intent;
+
+        try{
+            ResultReceiver resultReceiver =  startingIntent.getParcelableExtra("RECEIVER");
+            Bundle  bundle = new Bundle();
+            bundle.putString("msg", "Parsing Complete!");
+            resultReceiver.send(RESPONSE_MSG_TO_DEVICE_BOOT_RECEIVER, bundle);
+        } catch (NullPointerException e){
+            e.printStackTrace();
+        }
+
         return START_STICKY;
     }
 
@@ -146,11 +156,11 @@ public class ProgramsManagementService extends Service {
                     ref.get().updateProgramHashSet(programs);
                     ref.get().saveProgramsAtDB();
 
-//                    List list = new ArrayList<>(ref.get().getProgramHashSet());
-//                    Collections.sort(list);
-//                    for(Object o : list){
-//                        Log.i("ProgramsManagementService", "----------------------------------------------------------------" + ((Program)o).getD_day() + ((Program)o).getTitle());
-//                    }
+                    List list = new ArrayList<>(ref.get().getProgramHashSet());
+                    Collections.sort(list);
+                    for(Object o : list){
+                        Log.i("ProgramsManagementService", "----------------------------------------------------------------" + ((Program)o).getD_day() + ((Program)o).getTitle());
+                    }
 
                     Log.i("ProgramsManagementService", "----------------------------------------------------------------새로 등록된 프로그램들");
                     List list2 = new ArrayList<>(ref.get().getAddedProgramHashSet());
@@ -207,7 +217,7 @@ public class ProgramsManagementService extends Service {
         long lastUpdateTime = sharedPreferences.getLong("lastUpdateTime", 0);
         long currentTime = System.currentTimeMillis();
 
-        if(currentTime - lastUpdateTime >= 1700000 || isCalledFromMainActivity){
+        if(currentTime - lastUpdateTime >= /*1700000*/ 30000 || isCalledFromMainActivity){
             Log.i("ProgramsManagementService", "---------------------------------------------updateFunSystemPrograms()****************************** " + (serviecCount++));
             Message msg = Message.obtain(null, REQUEST_MSG_PROGRAM_LIST);
             msg.replyTo = messengerResponse;
@@ -233,12 +243,14 @@ public class ProgramsManagementService extends Service {
 
         }
 
-        if(startingIntent.getBooleanExtra("isCalledFromDeviceBootReceiveService", false)){
-            ResultReceiver resultReceiver =  startingIntent.getParcelableExtra("RECEIVER");
-            Bundle  bundle = new Bundle();
-            bundle.putString("msg", "Parsing Complete!");
-            resultReceiver.send(RESPONSE_MSG_TO_DEVICE_BOOT_RECEIVER, bundle);
-        }
+//        try{
+//            ResultReceiver resultReceiver =  startingIntent.getParcelableExtra("RECEIVER");
+//            Bundle  bundle = new Bundle();
+//            bundle.putString("msg", "Parsing Complete!");
+//            resultReceiver.send(RESPONSE_MSG_TO_DEVICE_BOOT_RECEIVER, bundle);
+//        } catch (NullPointerException e){
+//            e.printStackTrace();
+//        }
 
     }
 

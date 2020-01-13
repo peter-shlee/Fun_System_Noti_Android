@@ -14,13 +14,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.ResultReceiver;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -130,8 +130,9 @@ public class MainActivity extends AppCompatActivity {
                         if(url != null){
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_VIEW);
-
                             intent.setData(Uri.parse(url));
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 
                             startActivity(intent);
                         }
