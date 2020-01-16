@@ -5,11 +5,20 @@
     android:orientation="vertical"
     android:background="#006e93">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_programs"
-        android:scrollbars="vertical"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout_main_activity"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="3dp"/>
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_programs"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="3dp"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
 
 </LinearLayout>

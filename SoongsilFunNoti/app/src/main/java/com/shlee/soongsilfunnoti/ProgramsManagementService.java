@@ -36,14 +36,17 @@ import java.util.List;
 
 public class ProgramsManagementService extends Service {
 
+    private static final int MINIMUM_UPDATE_INTERVAL_TIME = 1700000;
+    private static final int ADDITIONAL_UPDATE_INTERVAL_TIME = 300000;
     private static final int REQUEST_MSG_PROGRAM_LIST = 1000;
     private static final int RESPONSE_MSG_PROGRAM_LIST = 2000;
     private static final int RESPONSE_MSG_TO_MAIN_ACTIVITY = 3000;
     private static final int RESPONSE_MSG_TO_DEVICE_BOOT_RECEIVER = 4000;
 
-    private Messenger messengerService;
-    private MsgResponseHandler messengerResponseHandler = null;
-    private Messenger messengerResponse;
+    ResultReceiver resultReceiver;
+
+    private Messenger parsingFunSystemServiceMessenger = null;
+    private Messenger messengerForResponseFromParsingFunSystemService = null;
 
     private HashSet<Program> programHashSet;
     private HashSet<Program> addedProgramHashSet;
@@ -52,23 +55,25 @@ public class ProgramsManagementService extends Service {
 
     static private Intent startingIntent;
 
-    private int serviecCount = 0;
+    private int serviceCount = 0;
 
     public class LocalBinder extends Binder {
         ProgramsManagementService ProgramsManagementService() {return ProgramsManagementService.this;}
+        //MainActivity.this.setProgramsManagementService(ProgramsManagementService.this);
     }
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i("ProgramsManagementService", "------------------------------------------------onServiceConnected");
-            messengerService = new Messenger(service);
-            updateFunSystemPrograms(startingIntent.getBooleanExtra("isCalledFromMainActivity", false));
+            parsingFunSystemServiceMessenger = new Messenger(service);
+            boolean isAnImmediateUpdateRequest = startingIntent.getBooleanExtra("isCalledFromMainActivity", false);
+            updateFunSystemPrograms(isAnImmediateUpdateRequest, resultReceiver);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            messengerService = null;
+            parsingFunSystemServiceMessenger = null;
         }
     };
 
@@ -76,17 +81,34 @@ public class ProgramsManagementService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("ProgramsManagementService", "------------------------------------------------ProgramDBHelper onStartCommand");
         startingIntent = intent;
+        resultReceiver = startingIntent.getParcelableExtra("RECEIVER");
 
+        if(startingIntent.getBooleanExtra("isCalledFromDeviceBootReceiveService", false)){
+            sendStopMessageToDeviceBootReceiveService();
+
+//            try{
+//                ResultReceiver resultReceiver =  startingIntent.getParcelableExtra("RECEIVER");
+//                Bundle bundle = new Bundle();
+//                bundle.putString("msg", "starting ProgramManagementService complete!");
+//                resultReceiver.send(RESPONSE_MSG_TO_DEVICE_BOOT_RECEIVER, bundle);
+//            } catch (NullPointerException e){
+//                e.printStackTrace();
+//            }
+        }
+
+
+
+        return START_STICKY;
+    }
+
+    private void sendStopMessageToDeviceBootReceiveService(){
         try{
-            ResultReceiver resultReceiver =  startingIntent.getParcelableExtra("RECEIVER");
-            Bundle  bundle = new Bundle();
-            bundle.putString("msg", "Parsing Complete!");
+            Bundle bundle = new Bundle();
+            bundle.putString("msg", "starting ProgramManagementService complete!");
             resultReceiver.send(RESPONSE_MSG_TO_DEVICE_BOOT_RECEIVER, bundle);
         } catch (NullPointerException e){
             e.printStackTrace();
         }
-
-        return START_STICKY;
     }
 
     @Nullable
@@ -99,12 +121,15 @@ public class ProgramsManagementService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        programHashSet = new HashSet<>();
+        addedProgramHashSet = new HashSet<>();
+
         Intent serviceIntent = new Intent(this, ParsingFunSystemService.class);
         bindService(serviceIntent, connection, BIND_AUTO_CREATE);
         Log.i("ProgramsManagementService", "------------------------------------------------bindService");
 
-        messengerResponseHandler = new MsgResponseHandler(this);
-        messengerResponse = new Messenger(messengerResponseHandler);
+        HandlerForResponseFromParsingFunSystemService msgResponseHandler = new HandlerForResponseFromParsingFunSystemService(this);
+        messengerForResponseFromParsingFunSystemService = new Messenger(msgResponseHandler);
 
         getProgramsFromDB();
     }
@@ -112,7 +137,6 @@ public class ProgramsManagementService extends Service {
     protected void setAlarmTimer(){
         final Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
-        c.add(Calendar.SECOND, 1);
         Intent intent = new Intent(this, DeviceBootReceiver.class);
         PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, 0);
 
@@ -122,7 +146,11 @@ public class ProgramsManagementService extends Service {
 
     @Override
     public void onDestroy() {
-        this.unbindService(connection);
+        try{
+            this.unbindService(connection);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         SettingSharedPreferences sp = new SettingSharedPreferences(this);
         SharedPreferences sharedPreferences = sp.getSettingSharedPreferences();
@@ -136,10 +164,10 @@ public class ProgramsManagementService extends Service {
         super.onDestroy();
     }
 
-    private static class MsgResponseHandler extends Handler{
+    private static class HandlerForResponseFromParsingFunSystemService extends Handler{
         private final WeakReference<ProgramsManagementService> ref;
 
-        public MsgResponseHandler(ProgramsManagementService service){
+        private HandlerForResponseFromParsingFunSystemService(ProgramsManagementService service){
             ref = new WeakReference<>(service);
         }
 
@@ -173,36 +201,7 @@ public class ProgramsManagementService extends Service {
                     if(!ref.get().addedProgramHashSet.isEmpty())ref.get().checkNewAddedProgramsIncludeKeywords();
 
                     // 메인 액티비티 화면 갱신 요구
-                    if(ref.get().startingIntent != null){
-                        Bundle  bundle = new Bundle();
-                        final ResultReceiver receiver;
-                        Log.i("ProgramsManagementService","------------------------------------------------------------------startingIntent");
-
-                        if(ref.get().startingIntent.getBooleanExtra("isCalledFromMainActivity", false)){
-                            try{ // 메인 액티비티에서 실행되어야만 아래 코드가 실행됨
-                                Log.i("ProgramsManagementService","------------------------------------------------------------------from MainActivity");
-                                receiver = ref.get().startingIntent.getParcelableExtra("RECEIVER");
-                                bundle.putString("msg", "Parsing Complete!");
-                                receiver.send(RESPONSE_MSG_TO_MAIN_ACTIVITY, bundle);
-                            } catch (NullPointerException e){
-                                Log.i("ProgramsManagementService","------------------------------------------------------------------from MainActivity exception");
-                                break;
-                            }
-                        }
-//                        else{
-//                            try{
-//                                Log.i("ProgramsManagementService","------------------------------------------------------------------from DeviceBootReceiveService");
-//                                receiver = ref.get().startingIntent.getParcelableExtra("RECEIVER");
-//                                bundle.putString("msg", "Parsing Complete!");
-//                                receiver.send(RESPONSE_MSG_TO_DEVICE_BOOT_RECEIVER, bundle);
-//                            } catch (NullPointerException e){
-//                                Log.i("ProgramsManagementService","------------------------------------------------------------------from DeviceBootReceiveService exception");
-//                                break;
-//                            }
-//                        }
-
-
-                    }
+                    ref.get().refreshRecyclerViewAtMainActivity();
 
                     break;
                 }
@@ -210,20 +209,35 @@ public class ProgramsManagementService extends Service {
         }
     }
 
-    public void updateFunSystemPrograms(boolean isCalledFromMainActivity){
-        Log.i("ProgramsManagementService", "---------------------------------------------updateFunSystemPrograms() " + (serviecCount));
-        SettingSharedPreferences sp = new SettingSharedPreferences(this);
-        SharedPreferences sharedPreferences = sp.getSettingSharedPreferences();
+    public void refreshRecyclerViewAtMainActivity(){
+        Log.i("ProgramsManagementService","------------------------------------------------------------------refreshRecyclerViewAtMainActivity");
+        if(startingIntent != null){
+            Bundle  bundle = new Bundle();
+
+            try{ // 메인 액티비티에서 아래 요청이 수행됨
+                Log.i("ProgramsManagementService","------------------------------------------------------------------refreshRecyclerViewAtMainActivity***************");
+                bundle.putString("msg", "Parsing Complete!");
+                resultReceiver.send(RESPONSE_MSG_TO_MAIN_ACTIVITY, bundle);
+            } catch (NullPointerException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateFunSystemPrograms(boolean isAnImmediateUpdateRequest, final ResultReceiver resultReceiverFromMainActivity){
+        resultReceiver = resultReceiverFromMainActivity;
+        Log.i("ProgramsManagementService", "---------------------------------------------updateFunSystemPrograms() " + (serviceCount));
+        SharedPreferences sharedPreferences = new SettingSharedPreferences(this).getSettingSharedPreferences();
         long lastUpdateTime = sharedPreferences.getLong("lastUpdateTime", 0);
         long currentTime = System.currentTimeMillis();
 
-        if(currentTime - lastUpdateTime >= /*1700000*/ 30000 || isCalledFromMainActivity){
-            Log.i("ProgramsManagementService", "---------------------------------------------updateFunSystemPrograms()****************************** " + (serviecCount++));
+        if(currentTime - lastUpdateTime >= MINIMUM_UPDATE_INTERVAL_TIME || isAnImmediateUpdateRequest){
+            Log.i("ProgramsManagementService", "---------------------------------------------updateFunSystemPrograms()****************************** " + (serviceCount++));
             Message msg = Message.obtain(null, REQUEST_MSG_PROGRAM_LIST);
-            msg.replyTo = messengerResponse;
+            msg.replyTo = messengerForResponseFromParsingFunSystemService;
             try{
-                messengerService.send(msg);
-            } catch (RemoteException e){
+                parsingFunSystemServiceMessenger.send(msg);
+            } catch (Exception e){
                 e.printStackTrace();
             }
 
@@ -236,33 +250,26 @@ public class ProgramsManagementService extends Service {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        updateFunSystemPrograms(false);
+                        //////////////////////////////////////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!
+                        updateFunSystemPrograms(false, resultReceiverFromMainActivity);
                     }
-                }, 1740000);
+                }, MINIMUM_UPDATE_INTERVAL_TIME + ADDITIONAL_UPDATE_INTERVAL_TIME);
             }
 
         }
 
-//        try{
-//            ResultReceiver resultReceiver =  startingIntent.getParcelableExtra("RECEIVER");
-//            Bundle  bundle = new Bundle();
-//            bundle.putString("msg", "Parsing Complete!");
-//            resultReceiver.send(RESPONSE_MSG_TO_DEVICE_BOOT_RECEIVER, bundle);
-//        } catch (NullPointerException e){
-//            e.printStackTrace();
-//        }
-
     }
 
     private void getProgramsFromDB(){
-        if(programHashSet == null) programHashSet = new HashSet<>();
-        if(!programHashSet.isEmpty()) programHashSet.clear();
 
         ProgramDBHelper helper = new ProgramDBHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT title, department, date, d_day, url FROM tb_program", null);
 
-        while(cursor.moveToNext()){
+        if(programHashSet == null) programHashSet = new HashSet<>();
+        if(!programHashSet.isEmpty()) programHashSet.clear();
+
+        while (cursor.moveToNext()){
             Program program = new Program(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
             programHashSet.add(program);
         }
@@ -270,13 +277,15 @@ public class ProgramsManagementService extends Service {
         cursor.close();
         db.close();
 
-
-        Iterator<Program> iterator = programHashSet.iterator();
-        while(iterator.hasNext()){
-            Program program = iterator.next();
-
-            Log.i("ProgramsManagementService", program.getD_day() + program.getURL() + program.getDate() + program.getDepartment() + program.getTitle());
+        // print programs from DB
+        if(programHashSet != null){
+            Iterator<Program> iterator = programHashSet.iterator();
+            while(iterator.hasNext()){
+                Program program = iterator.next();
+                Log.i("ProgramsManagementService", program.getD_day() + program.getURL() + program.getDate() + program.getDepartment() + program.getTitle());
+            }
         }
+
     }
 
     private void saveProgramsAtDB(){
@@ -284,11 +293,9 @@ public class ProgramsManagementService extends Service {
 
         ProgramDBHelper helper = new ProgramDBHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
-
         db.execSQL("DELETE FROM tb_program");
 
         Iterator<Program> iterator = programHashSet.iterator();
-
         while(iterator.hasNext()){
             Program program = iterator.next();
             db.execSQL("INSERT INTO tb_program (title, department, date, d_day, url) VALUES ( \'" + program.getTitle() + "\', \'" + program.getDepartment() + "\', \'"+ program.getDate() + "\', \'"+ program.getD_day() + "\', \'"+ program.getURL() + "\')");
@@ -298,23 +305,42 @@ public class ProgramsManagementService extends Service {
     }
 
     private void setProgramHashSet(HashSet<Program> programHashSet){
+        if (programHashSet == null) programHashSet = new HashSet<>();
         this.programHashSet = programHashSet;
         Log.i("ProgramsManagementService", "------------------------------------------------프로그램 목록 업데이트됨");
     }
 
     private void updateProgramHashSet(HashSet<Program> newProgramHashSet){
-        if(addedProgramHashSet == null) addedProgramHashSet = new HashSet<>();
-        if(!addedProgramHashSet.isEmpty()) addedProgramHashSet.clear();
+        if(newProgramHashSet == null) {
+            addedProgramHashSet = new HashSet<>();
+            return;
+        }
+        if(newProgramHashSet.isEmpty()) {
+            addedProgramHashSet = new HashSet<>();
+            return;
+        }
+
+        HashSet<Program> tmpAddedProgramHashSet = new HashSet<>();
 
         Iterator<Program> newProgramHashSetIterator = newProgramHashSet.iterator();
 
-        while(newProgramHashSetIterator.hasNext()){
+        while(newProgramHashSetIterator.hasNext() && programHashSet != null){
             Program program = newProgramHashSetIterator.next();
             if(!programHashSet.contains(program)){
                 Log.i("ProgramsManagementService", "------------------------------------------------------------!programHashSet.contains(program)");
-                addedProgramHashSet.add(program);
+                tmpAddedProgramHashSet.add(program);
             }
         }
+
+        if(tmpAddedProgramHashSet.isEmpty()) {
+            addedProgramHashSet = new HashSet<>();
+            return;
+        }
+
+        if(addedProgramHashSet == null) addedProgramHashSet = new HashSet<>();
+        if(!addedProgramHashSet.isEmpty()) addedProgramHashSet.clear();
+        addedProgramHashSet.addAll(tmpAddedProgramHashSet);
+
 
         setProgramHashSet(newProgramHashSet);
     }
@@ -328,6 +354,8 @@ public class ProgramsManagementService extends Service {
     }
 
     public ArrayList<Program> getProgramArrayList(){
+        if(programHashSet == null) return new ArrayList<>();
+
         List list = new ArrayList<>(getProgramHashSet());
         Collections.sort(list);
 
@@ -335,6 +363,9 @@ public class ProgramsManagementService extends Service {
     }
 
     private void checkNewAddedProgramsIncludeKeywords(){
+        if(addedProgramHashSet == null) return;
+        if(addedProgramHashSet.isEmpty()) return;
+
         ArrayList<String> keywords = new KeywordsManager(this).getKeywordArray();
         HashSet<String> containedKeywords = new HashSet<>();
 
@@ -352,6 +383,10 @@ public class ProgramsManagementService extends Service {
         }
         Log.i("ProgramsManagementService", "------------------------------------------------------------call newProgramAddedNotification");
         newProgramAddedNotification(containedKeywords);
+
+        keywords = null;
+        containedKeywords = null;
+        addedProgramHashSet.clear();
     }
 
     private NotificationManager registerNotiChannel(String channelName, String channelDescription, int importance){
@@ -375,13 +410,9 @@ public class ProgramsManagementService extends Service {
 
 
     private void newProgramAddedNotification(HashSet<String> containedKeywords){
-        Log.i("ProgramsManagementService", "------------------------------------------------------------newProgramAddedNotification 00");
         if(!(new SettingSharedPreferences(this).getSettingSharedPreferences().getBoolean("isAlarmON", true))) return;
-        Log.i("ProgramsManagementService", "------------------------------------------------------------newProgramAddedNotification 01");
         if(addedProgramHashSet.size() == 0) return;
-        Log.i("ProgramsManagementService", "------------------------------------------------------------newProgramAddedNotification 02");
         if(containedKeywords.size() == 0) return;
-        Log.i("ProgramsManagementService", "------------------------------------------------------------newProgramAddedNotification 03");
 
         Log.i("ProgramsManagementService", "------------------------------------------------------------newProgramAddedNotification");
 
@@ -403,7 +434,7 @@ public class ProgramsManagementService extends Service {
         ArrayList<String> containedKeywordsList = new ArrayList<>(containedKeywords);
         StringBuilder keywordsString = new StringBuilder("\'" + containedKeywordsList.get(0) + "\'");
         for(String keyword : containedKeywordsList.subList(1,containedKeywordsList.size())){
-            keywordsString.append(", '" + keyword + "'");
+            keywordsString.append(", \'").append(keyword).append("\'");
         }
         builder.setContentTitle("펀시스템에 새로운 프로그램이 등록되었습니다.")
                 .setContentText(keywordsString + " 키워드에 대한 새로운 프로그램이 등록되었습니다.")

@@ -1,6 +1,5 @@
 package com.shlee.soongsilfunnoti;
 
-import android.util.Log;
 import java.util.Objects;
 
 import androidx.annotation.Nullable;

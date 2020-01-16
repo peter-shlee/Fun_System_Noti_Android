@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -20,43 +22,58 @@ import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int RESPONSE_MSG_TO_MAIN_ACTIVITY = 3000;
 
-    ProgramsManagementService programsManagementService = null;
+    static ProgramsManagementService programsManagementService = null;
 
+    SwipeRefreshLayout swipeRefreshLayout;
     RecyclerView recyclerView;
     ArrayList<Program> programArrayList;
 
     private Intent programManagementServiceIntent;
+
+    boolean isCalledFromSwipeRefreshLayout;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i("메인 액티비티", "-------------------------------------------------------------------메인 액티비티 onServiceConnected");
             programsManagementService = ((ProgramsManagementService.LocalBinder) service).ProgramsManagementService();
-
+            programArrayList = programsManagementService.getProgramArrayList();
+            //programArrayList = new ArrayList<>();
             setRecyclerView();
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    requestRefreshProgramList();
+//                }
+//            }, 2000);
+
+            if(isCalledFromSwipeRefreshLayout) swipeRefreshLayout.setRefreshing(false);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            programsManagementService = null;
         }
     };
+
+    private void setProgramManagementServiceIntent(){
+        programManagementServiceIntent = new Intent(this, ProgramsManagementService.class);
+        programManagementServiceIntent.putExtra("RECEIVER", resultReceiver);
+        programManagementServiceIntent.putExtra("isCalledFromMainActivity", true);
+        programManagementServiceIntent.putExtra("isCalledFromDeviceBootReceiveService", false);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        programManagementServiceIntent = new Intent(this, ProgramsManagementService.class);
-        programManagementServiceIntent.putExtra("RECEIVER", resultReceiver);
-        programManagementServiceIntent.putExtra("isCalledFromMainActivity", true);
-        programManagementServiceIntent.putExtra("isCalledFromDeviceBootReceiveService", false);
+        setProgramManagementServiceIntent();
         startService(programManagementServiceIntent);
         bindService(programManagementServiceIntent,connection,0);
 
@@ -72,13 +89,38 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
 
+        isCalledFromSwipeRefreshLayout = false;
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout_main_activity);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(!isCalledFromSwipeRefreshLayout){
+                    isCalledFromSwipeRefreshLayout = true;
+                    requestRefreshProgramList();
+                } else {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            requestRefreshProgramList();
+                        }
+                    }, 2000);
+                }
+            }
+        });
+
         try{
-            programsManagementService.updateFunSystemPrograms(true);
+            programsManagementService.updateFunSystemPrograms(true, resultReceiver);
         } catch (NullPointerException e){
             e.printStackTrace();
         }
 
     }
+
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//        programsManagementService = null;
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -112,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     private void setRecyclerView(){
         // 리사이클러뷰에 표시할 데이터 리스트 생성.
         Log.i("메인 액티비티", "-------------------------------------------------------------------프로그램 배열 가져옴");
-        programArrayList = programsManagementService.getProgramArrayList();
+        //programArrayList = programsManagementService.getProgramArrayList();
         if(programArrayList == null) programArrayList = new ArrayList<>();
         // 리사이클러뷰에 LinearLayoutManager 객체 지정
         recyclerView = findViewById(R.id.recycler_programs);
@@ -131,8 +173,6 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_VIEW);
                             intent.setData(Uri.parse(url));
-                            //intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                            //intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 
                             startActivity(intent);
                         }
@@ -142,26 +182,45 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+    private void requestRefreshProgramList(){
+        if(programsManagementService == null){
+            startService(programManagementServiceIntent);
+            bindService(programManagementServiceIntent,connection,0);
+        } else {
+            programsManagementService.updateFunSystemPrograms(true, resultReceiver);
+        }
+    }
+
     private void updateRecyclerView(){
         Log.i("메인 액티비티", "-------------------------------------------------------------------updateRecyclerView 프로그램 배열 가져옴");
+        ArrayList<Program> newPrograms = programsManagementService.getProgramArrayList();
+        if(newPrograms == null) return;
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if(adapter == null) return;
+
         programArrayList.clear();
         programArrayList.addAll(programsManagementService.getProgramArrayList());
 //        for(Object o : programArrayList){
 //            Log.i("메인 액티비티", "----------------------------------------------------------------" + ((Program)o).getTitle());
 //        }
-        //recyclerView.invalidate();
-        recyclerView.getAdapter().notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     private Handler handler = new Handler();
     private ResultReceiver resultReceiver = new ResultReceiver(handler){
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
+            Log.i("메인 액티비티", "-------------------------------------------------------------------onReceiveResult");
             super.onReceiveResult(resultCode, resultData);
 
             if(resultCode == RESPONSE_MSG_TO_MAIN_ACTIVITY){
                 Log.i("메인 액티비티", "-------------------------------------------------------------------" + resultData.getString("msg"));
                 updateRecyclerView();
+
+                if(isCalledFromSwipeRefreshLayout){
+                    swipeRefreshLayout.setRefreshing(false);
+                    isCalledFromSwipeRefreshLayout = false;
+                }
             }
         }
     };

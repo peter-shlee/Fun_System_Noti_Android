@@ -1,6 +1,5 @@
 package com.shlee.soongsilfunnoti;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -10,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Messenger;
 import android.os.ResultReceiver;
 import android.util.Log;
 
