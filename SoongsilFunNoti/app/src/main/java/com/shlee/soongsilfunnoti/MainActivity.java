@@ -16,6 +16,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -29,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ArrayList<Program> programArrayList;
     ArrayList<Program> newPrograms;
+
+    private ImageView loadingView;
+    private Animation animation;
 
     private Intent programManagementServiceIntent;
 
@@ -70,6 +76,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        loadingView = findViewById(R.id.image_view_loading);
+        animation = AnimationUtils.loadAnimation(this, R.anim.rotate);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                animation.setFillAfter(true);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        loadingView.startAnimation(animation);
 
         setProgramManagementServiceIntent();
         startService(programManagementServiceIntent);
@@ -223,6 +245,9 @@ public class MainActivity extends AppCompatActivity {
                 if(isCalledFromSwipeRefreshLayout){
                     swipeRefreshLayout.setRefreshing(false);
                     isCalledFromSwipeRefreshLayout = false;
+                } else {
+                    loadingView.setVisibility(View.INVISIBLE);
+                    loadingView.clearAnimation();
                 }
             }
         }
