@@ -14,9 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".DeviceBootReceiveService"
+            android:name=".ProgramsManagementService"
             android:enabled="true"
             android:exported="true"></service>
+        <service
+            android:name=".ServiceStarterForegroundService"
+            android:enabled="true"
+            android:exported="true" />
 
         <receiver
             android:name=".DeviceBootReceiver"
@@ -44,6 +48,7 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

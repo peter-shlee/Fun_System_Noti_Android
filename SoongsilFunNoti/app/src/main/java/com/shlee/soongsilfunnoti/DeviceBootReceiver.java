@@ -20,7 +20,7 @@ public class DeviceBootReceiver extends BroadcastReceiver {
         SharedPreferences sharedPreferences = sp.getSettingSharedPreferences();
 
         if(sharedPreferences.getBoolean("isAlarmON", true)){
-            programManagementService = new Intent(context, DeviceBootReceiveService.class);
+            programManagementService = new Intent(context, ServiceStarterForegroundService.class);
 
             this.context = context;
 

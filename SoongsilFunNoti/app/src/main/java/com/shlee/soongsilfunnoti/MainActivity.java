@@ -6,15 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.app.SearchManager;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.util.Log;
 import android.view.Menu;
@@ -32,36 +28,38 @@ public class MainActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     RecyclerView recyclerView;
     ArrayList<Program> programArrayList;
+    ArrayList<Program> newPrograms;
 
     private Intent programManagementServiceIntent;
 
     boolean isCalledFromSwipeRefreshLayout;
 
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i("메인 액티비티", "-------------------------------------------------------------------메인 액티비티 onServiceConnected");
-            programsManagementService = ((ProgramsManagementService.LocalBinder) service).ProgramsManagementService();
-            programArrayList = programsManagementService.getProgramArrayList();
-            //programArrayList = new ArrayList<>();
-            setRecyclerView();
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    requestRefreshProgramList();
-//                }
-//            }, 2000);
-
-            if(isCalledFromSwipeRefreshLayout) swipeRefreshLayout.setRefreshing(false);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            programsManagementService = null;
-        }
-    };
+//    private ServiceConnection connection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            Log.i("메인 액티비티", "-------------------------------------------------------------------메인 액티비티 onServiceConnected");
+//            //programsManagementService = ((ProgramsManagementService.LocalBinder) service).ProgramsManagementService();
+//            //programArrayList = programsManagementService.getProgramArrayList();
+//            //programArrayList = new ArrayList<>();
+//            //setRecyclerView();
+////            handler.postDelayed(new Runnable() {
+////                @Override
+////                public void run() {
+////                    requestRefreshProgramList();
+////                }
+////            }, 2000);
+//
+//            //if(isCalledFromSwipeRefreshLayout) swipeRefreshLayout.setRefreshing(false);
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            programsManagementService = null;
+//        }
+//    };
 
     private void setProgramManagementServiceIntent(){
+        //programManagementServiceIntent = new Intent(this, ProgramsManagementService.class);
         programManagementServiceIntent = new Intent(this, ProgramsManagementService.class);
         programManagementServiceIntent.putExtra("RECEIVER", resultReceiver);
         programManagementServiceIntent.putExtra("isCalledFromMainActivity", true);
@@ -75,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
         setProgramManagementServiceIntent();
         startService(programManagementServiceIntent);
-        bindService(programManagementServiceIntent,connection,0);
 
         getSupportActionBar().setTitle("숭실대 펀시스템");
 
@@ -114,13 +111,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        setRecyclerView();
     }
-
-//    @Override
-//    protected void onRestart() {
-//        super.onRestart();
-//        programsManagementService = null;
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -140,23 +132,38 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        unbindService(connection);
-        if(programManagementServiceIntent != null){
-            stopService(programManagementServiceIntent);
-            programManagementServiceIntent = null;
-        }
-
-        super.onDestroy();
-    }
+//    protected void setAlarmTimer(){
+//        final Calendar c = Calendar.getInstance();
+//        c.setTimeInMillis(System.currentTimeMillis() + 3000);
+//        Intent intent = new Intent(this, DeviceBootReceiver.class);
+//        PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, 0);
+//
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), sender);
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        Log.i("메인 액티비티", "-------------------------------------------------------------------onDestroy");
+//
+//        setAlarmTimer();
+//        //startService(programManagementServiceIntent);
+//        //unbindService(connection);
+////        if(programManagementServiceIntent != null){
+////            stopService(programManagementServiceIntent);
+////            programManagementServiceIntent = null;
+////        }
+//
+//        super.onDestroy();
+//    }
 
     private void setRecyclerView(){
         // 리사이클러뷰에 표시할 데이터 리스트 생성.
-        Log.i("메인 액티비티", "-------------------------------------------------------------------프로그램 배열 가져옴");
-        //programArrayList = programsManagementService.getProgramArrayList();
+        Log.i("메인 액티비티", "-------------------------------------------------------------------setRecyclerView");
+        programArrayList = newPrograms;
         if(programArrayList == null) programArrayList = new ArrayList<>();
         // 리사이클러뷰에 LinearLayoutManager 객체 지정
+
         recyclerView = findViewById(R.id.recycler_programs);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -183,23 +190,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestRefreshProgramList(){
-        if(programsManagementService == null){
-            startService(programManagementServiceIntent);
-            bindService(programManagementServiceIntent,connection,0);
-        } else {
-            programsManagementService.updateFunSystemPrograms(true, resultReceiver);
-        }
+        startService(programManagementServiceIntent);
     }
 
     private void updateRecyclerView(){
         Log.i("메인 액티비티", "-------------------------------------------------------------------updateRecyclerView 프로그램 배열 가져옴");
-        ArrayList<Program> newPrograms = programsManagementService.getProgramArrayList();
+        //ArrayList<Program> newPrograms = programsManagementService.getProgramArrayList();
         if(newPrograms == null) return;
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         if(adapter == null) return;
 
         programArrayList.clear();
-        programArrayList.addAll(programsManagementService.getProgramArrayList());
+        programArrayList.addAll(newPrograms);
 //        for(Object o : programArrayList){
 //            Log.i("메인 액티비티", "----------------------------------------------------------------" + ((Program)o).getTitle());
 //        }
@@ -214,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
             super.onReceiveResult(resultCode, resultData);
 
             if(resultCode == RESPONSE_MSG_TO_MAIN_ACTIVITY){
+                newPrograms = (ArrayList<Program>) resultData.getSerializable("newProgramArrayList");
                 Log.i("메인 액티비티", "-------------------------------------------------------------------" + resultData.getString("msg"));
                 updateRecyclerView();
 

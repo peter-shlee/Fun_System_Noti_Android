@@ -15,7 +15,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-public class DeviceBootReceiveService extends Service {
+public class ServiceStarterForegroundService extends Service {
 
     private static final int RESPONSE_MSG_TO_DEVICE_BOOT_RECEIVER = 4000;
 
@@ -51,6 +51,8 @@ public class DeviceBootReceiveService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i("ServiceStarterForegroundService", "--------------------------------------onStartCommand();");
+        //Intent serviceIntent = new Intent(this, ProgramsManagementService.class);
         Intent serviceIntent = new Intent(this, ProgramsManagementService.class);
         serviceIntent.putExtra("isCalledFromMainActivity", false);
         serviceIntent.putExtra("isCalledFromDeviceBootReceiveService", true);
@@ -75,7 +77,7 @@ public class DeviceBootReceiveService extends Service {
             super.onReceiveResult(resultCode, resultData);
 
             if(resultCode == RESPONSE_MSG_TO_DEVICE_BOOT_RECEIVER){
-                Log.i("DeviceBootReceiveService", "--------------------------------------stopSelf();");
+                Log.i("ServiceStarterForegroundService", "--------------------------------------stopSelf();");
                 stopSelf();
             }
         }
