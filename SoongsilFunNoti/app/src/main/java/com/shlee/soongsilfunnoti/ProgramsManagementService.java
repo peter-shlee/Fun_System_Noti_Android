@@ -216,6 +216,8 @@ public class ProgramsManagementService extends Service {
 
                     //새로운 프로그램들 중 키워드 포함된 프로그램 있는지 검사
                     if(!ref.get().addedProgramHashSet.isEmpty())ref.get().checkNewAddedProgramsIncludeKeywords();
+                    
+                    ref.get().setProgramHashSet(programs);
                     ref.get().saveProgramsAtDB(); // 새로운 프로그램 목록을 DB에 저장
 
                     ref.get().checkProgramsIncludeKeywords(); // 키워드를 포함한 프로그램이 있다면 하이라이트 표시
@@ -400,6 +402,7 @@ public class ProgramsManagementService extends Service {
     }
 
     private void saveProgramsAtDB(){
+        Log.i("ProgramsManagementService", "------------------------------------------------saveProgramsAtDB");
         if (programHashSet == null) return;
 
         ProgramDBHelper helper = new ProgramDBHelper(this);
@@ -416,6 +419,7 @@ public class ProgramsManagementService extends Service {
     }
 
     private void getProgramsFromDB(){
+        Log.i("ProgramsManagementService", "------------------------------------------------getProgramsFromDB");
 
         ProgramDBHelper helper = new ProgramDBHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -438,6 +442,10 @@ public class ProgramsManagementService extends Service {
 
         List list = new ArrayList<>(getProgramHashSet());
         Collections.sort(list);
+
+        for(int i = 0; i < list.size(); ++i){
+            Log.i("ProgramsManagementService", "------------------------------------------------parsing result : " + ((Program)list.get(i)).getTitle());
+        }
 
         return new ArrayList<Program>(list);
     }
