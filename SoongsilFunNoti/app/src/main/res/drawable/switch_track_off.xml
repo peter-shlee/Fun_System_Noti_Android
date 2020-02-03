@@ -10,7 +10,7 @@
         android:height="20dp" />
 
     <solid
-        android:color="#bebfbf" />
+        android:color="@color/colorSwitchBackground" />
 
     <!--stroke
         android:width="2dp"

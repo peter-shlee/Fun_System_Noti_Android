@@ -6,7 +6,7 @@
     android:layout_marginTop="3dp"
     android:layout_marginLeft="3dp"
     android:layout_marginRight="3dp"
-    android:background="#FFFF"
+    android:background="@color/colorPlate"
     android:padding="8dp">
 
     <TextView
@@ -18,7 +18,7 @@
         android:paddingLeft="8dp"
         android:paddingBottom="2dp"
         android:textSize="16dp"
-        android:textColor="#454545"/>
+        android:textColor="?android:textColorSecondary"/>
 
     <TextView
         android:id="@+id/text_program_title"

@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -90,8 +91,8 @@ public class ProgramsAdapter extends RecyclerView.Adapter<ProgramsAdapter.ViewHo
         holder.date.setText(program.getDate());
         holder.url.setText(program.getURL());
         holder.remainingDate.setText(String.valueOf(program.getRemainingDate()));
-        if(program.isHighlight()) holder.background.setBackgroundColor(Color.parseColor("#62c6c6"));
-        else holder.background.setBackgroundColor(Color.WHITE);
+        if(program.isHighlight()) holder.background.setBackgroundColor(ContextCompat.getColor(holder.background.getContext(),R.color.colorHighlight));
+        else holder.background.setBackgroundColor(ContextCompat.getColor(holder.background.getContext(),R.color.colorPlate));
     }
 
     // 전체 데이터 갯수 리턴

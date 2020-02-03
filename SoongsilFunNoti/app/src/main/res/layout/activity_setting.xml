@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#006e93">
+    android:background="@color/colorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,7 +12,7 @@
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:orientation="horizontal"
-        android:background="#FFFF"
+        android:background="@color/colorPlate"
         android:padding="8dp">
 
         <RelativeLayout
@@ -36,7 +36,7 @@
                 android:paddingLeft="8dp"
                 android:paddingBottom="8dp"
                 android:visibility="invisible"
-                android:textColor="#62c6c6"
+                android:textColor="@color/colorHighlight"
                 android:text="ON"/>
 
             <TextView
@@ -80,7 +80,7 @@
         android:layout_marginRight="3dp"
         android:layout_marginBottom="3dp"
         android:layout_weight="1"
-        android:background="#FFFF">
+        android:background="@color/colorPlate">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="24dp"
                 android:src="@drawable/ic_action_plus"
-                android:onClick="onClickPlusButton"/>
+                android:onClick="onClickPlusButton" />
 
         </RelativeLayout>
 
@@ -118,7 +118,7 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="4dp"
             android:paddingBottom="1dp"
-            android:background="#006e93"/>
+            android:background="@color/colorBackground"/>
 
 
 

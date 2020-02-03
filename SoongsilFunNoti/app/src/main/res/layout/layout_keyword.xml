@@ -6,7 +6,7 @@
     android:paddingTop="4dp"
     android:paddingBottom="4dp"
     android:orientation="horizontal"
-    android:background="#FFFF">
+    android:background="@color/colorPlate">
 
 <TextView
     android:id="@+id/text_keyword"
