@@ -8,4 +8,5 @@
     <color name="colorHighlight">#62c6c6</color>
     <color name="colorSwitch">#FFFFFF</color>
     <color name="colorSwitchBackground">#BEBFBF</color>
+    <color name="colorText">#00222e</color>
 </resources>

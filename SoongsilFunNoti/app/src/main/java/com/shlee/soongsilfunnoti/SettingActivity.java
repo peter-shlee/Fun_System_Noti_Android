@@ -2,6 +2,7 @@ package com.shlee.soongsilfunnoti;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -104,6 +105,7 @@ public class SettingActivity extends AppCompatActivity implements CompoundButton
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View addKeywordDialogView = inflater.inflate(R.layout.add_keyword_dialog_layout, null);
         final EditText newKeywordEditText = addKeywordDialogView.findViewById(R.id.edit_text_add_keyword_dialog_layout);
+        newKeywordEditText.setTextColor(ContextCompat.getColor(this,R.color.colorText));
 
         dialogBuilder.setView(addKeywordDialogView);
         dialogBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {

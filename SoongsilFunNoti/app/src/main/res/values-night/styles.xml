@@ -11,8 +11,4 @@
         <item name="android:textColorSecondary">#757575</item>
     </style>
 
-    <style name="ActionBarTextColor" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">#ffffff</item>
-    </style>
-
 </resources>
