@@ -216,8 +216,7 @@ public class ProgramsManagementService extends Service {
 
                     //새로운 프로그램들 중 키워드 포함된 프로그램 있는지 검사
                     if(!ref.get().addedProgramHashSet.isEmpty())ref.get().checkNewAddedProgramsIncludeKeywords();
-                    
-                    ref.get().setProgramHashSet(programs);
+
                     ref.get().saveProgramsAtDB(); // 새로운 프로그램 목록을 DB에 저장
 
                     ref.get().checkProgramsIncludeKeywords(); // 키워드를 포함한 프로그램이 있다면 하이라이트 표시
@@ -361,14 +360,16 @@ public class ProgramsManagementService extends Service {
     }
 
     private void updateProgramHashSet(HashSet<Program> newProgramHashSet){
+        Log.i("ProgramsManagementService", "------------------------------------------------------------updateProgramHashSet");
+
+        addedProgramHashSet = new HashSet<>();
         if(newProgramHashSet == null) {
-            addedProgramHashSet = new HashSet<>();
             return;
         }
         if(newProgramHashSet.isEmpty()) {
-            addedProgramHashSet = new HashSet<>();
             return;
         }
+        Log.i("ProgramsManagementService", "------------------------------------------------------------updateProgramHashSet2");
 
         HashSet<Program> tmpAddedProgramHashSet = new HashSet<>();
 
@@ -382,17 +383,13 @@ public class ProgramsManagementService extends Service {
             }
         }
 
+        setProgramHashSet(newProgramHashSet);
+
         if(tmpAddedProgramHashSet.isEmpty()) {
-            addedProgramHashSet = new HashSet<>();
             return;
         }
 
-        if(addedProgramHashSet == null) addedProgramHashSet = new HashSet<>();
-        if(!addedProgramHashSet.isEmpty()) addedProgramHashSet.clear();
         addedProgramHashSet.addAll(tmpAddedProgramHashSet);
-
-
-        setProgramHashSet(newProgramHashSet);
     }
 
     private void setProgramHashSet(HashSet<Program> programHashSet){

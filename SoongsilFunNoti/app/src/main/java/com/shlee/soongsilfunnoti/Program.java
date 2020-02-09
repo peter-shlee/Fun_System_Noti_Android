@@ -29,7 +29,7 @@ public class Program implements Comparable {
     @Override
     public boolean equals(@Nullable Object obj) {
         //Log.i("Program", "--------------------------------------------------equals");
-        return (title.equals(((Program)obj).getTitle()) && date.equals(((Program)obj).getDate()));
+        return (title.equals(((Program)obj).getTitle()));
     }
 
     @Override
