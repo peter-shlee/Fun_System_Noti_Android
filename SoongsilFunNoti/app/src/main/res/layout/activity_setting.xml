@@ -73,6 +73,71 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:orientation="horizontal"
+        android:background="@color/colorPlate"
+        android:padding="8dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/text_all_program_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="모든 프로그램 알림 받기"
+                android:textSize="20dp"/>
+
+            <TextView
+                android:id="@+id/text_all_program_notification_on"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_all_program_notification"
+                android:paddingLeft="8dp"
+                android:paddingBottom="8dp"
+                android:visibility="invisible"
+                android:textColor="@color/colorHighlight"
+                android:text="모든 프로그램에 대해 알림을 받습니다"/>
+
+            <TextView
+                android:id="@+id/text_all_program_notification_off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_all_program_notification"
+                android:paddingLeft="8dp"
+                android:paddingBottom="8dp"
+                android:visibility="visible"
+                android:textColor="#bebfbf"
+                android:text="키워드 알림만 받습니다"/>
+
+        </RelativeLayout>
+
+
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Switch
+            android:id="@+id/switch_all_program_alarm_on_off"
+            android:track="@drawable/switch_track_selector"
+            android:thumb="@drawable/switch_thumb"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:paddingRight="16dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="8dp"
         android:layout_marginTop="3dp"

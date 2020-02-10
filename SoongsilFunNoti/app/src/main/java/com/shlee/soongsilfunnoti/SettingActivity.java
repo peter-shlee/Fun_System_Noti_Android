@@ -32,10 +32,14 @@ public class SettingActivity extends AppCompatActivity implements CompoundButton
     KeywordsManager keywordsManager;
 
     Switch alarmOnOffSwitch;
+    Switch allProgramAlarmOnOffSwitch;
     boolean isAlarmON;
+    boolean isAllProgramAlarmON;
     SharedPreferences settingSharedPreferences;
     TextView alarmOn;
     TextView alarmOff;
+    TextView allProgramAlarmOn;
+    TextView allProgramAlarmOff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,8 @@ public class SettingActivity extends AppCompatActivity implements CompoundButton
 
         alarmOn = findViewById(R.id.text_notification_on);
         alarmOff = findViewById(R.id.text_notification_off);
+        allProgramAlarmOn = findViewById(R.id.text_all_program_notification_on);
+        allProgramAlarmOff = findViewById(R.id.text_all_program_notification_off);
 
         settingSharedPreferences = new SettingSharedPreferences(this).getSettingSharedPreferences();
 
@@ -51,6 +57,11 @@ public class SettingActivity extends AppCompatActivity implements CompoundButton
         alarmOnOffSwitch.setOnCheckedChangeListener(this);
         isAlarmON = settingSharedPreferences.getBoolean("isAlarmON", false);
         alarmOnOffSwitch.setChecked(isAlarmON);
+
+        allProgramAlarmOnOffSwitch = findViewById(R.id.switch_all_program_alarm_on_off);
+        allProgramAlarmOnOffSwitch.setOnCheckedChangeListener(this);
+        isAllProgramAlarmON = settingSharedPreferences.getBoolean("isAllProgramAlarmON", false);
+        allProgramAlarmOnOffSwitch.setChecked(isAllProgramAlarmON);
 
         getSupportActionBar().setTitle("알림 설정");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -71,6 +82,16 @@ public class SettingActivity extends AppCompatActivity implements CompoundButton
                 alarmOn.setVisibility(View.INVISIBLE);
                 alarmOff.setVisibility(View.VISIBLE);
             }
+        } else if(buttonView == allProgramAlarmOnOffSwitch){
+            isAllProgramAlarmON = isChecked; // 알림 ON인지 OFF인지 저장
+
+            if(isChecked){
+                allProgramAlarmOn.setVisibility(View.VISIBLE);
+                allProgramAlarmOff.setVisibility(View.INVISIBLE);
+            } else{
+                allProgramAlarmOn.setVisibility(View.INVISIBLE);
+                allProgramAlarmOff.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -83,6 +104,7 @@ public class SettingActivity extends AppCompatActivity implements CompoundButton
         } else if(id == R.id.action_save){
             SharedPreferences.Editor editor = settingSharedPreferences.edit();
             editor.putBoolean("isAlarmON", isAlarmON);
+            editor.putBoolean("isAllProgramAlarmON", isAllProgramAlarmON);
             editor.apply();
 
             Log.i("SettingActivity", "----------------------------------------------------------------R.id.action_save : " + isAlarmON);

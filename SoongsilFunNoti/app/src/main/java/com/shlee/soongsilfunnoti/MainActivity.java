@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = settingPref.edit();
             editor.putBoolean("isFirstExecute", false);
             editor.putBoolean("isAlarmON", true);
+            editor.putBoolean("isAllProgramAlarmON", false);
             //editor.
             editor.commit();
         }

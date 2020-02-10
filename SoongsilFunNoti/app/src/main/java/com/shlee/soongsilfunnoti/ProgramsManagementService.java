@@ -251,9 +251,10 @@ public class ProgramsManagementService extends Service {
     }
 
     private void newProgramAddedNotification(HashSet<String> containedKeywords){
-        if(!(new SettingSharedPreferences(this).getSettingSharedPreferences().getBoolean("isAlarmON", true))) return;
-        if(addedProgramHashSet.size() == 0) return;
-        if(containedKeywords.size() == 0) return;
+        SharedPreferences settingSharedPreferences = new SettingSharedPreferences(this).getSettingSharedPreferences();
+        if(!(settingSharedPreferences.getBoolean("isAlarmON", false))) return;
+        if(addedProgramHashSet.isEmpty()) return;
+        if(containedKeywords.isEmpty() && !settingSharedPreferences.getBoolean("isAllProgramAlarmON", false)) return;
 
         Log.i("ProgramsManagementService", "------------------------------------------------------------newProgramAddedNotification");
 
@@ -272,17 +273,23 @@ public class ProgramsManagementService extends Service {
             builder.setSmallIcon(R.mipmap.ic_launcher_foreground); // Oreo 이하에서 mipmap 사용하지 않으면 Couldn't create icon: StatusBarIcon 에러남
         }
 
-        ArrayList<String> containedKeywordsList = new ArrayList<>(containedKeywords);
-        StringBuilder keywordsString = new StringBuilder("\'" + containedKeywordsList.get(0) + "\'");
-        for(String keyword : containedKeywordsList.subList(1,containedKeywordsList.size())){
-            keywordsString.append(", \'").append(keyword).append("\'");
-        }
+
         builder.setContentTitle("펀시스템에 새로운 프로그램이 등록되었습니다.")
-                .setContentText(keywordsString + " 키워드에 대한 새로운 프로그램이 등록되었습니다.")
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+        if(containedKeywords.isEmpty()){
+            builder.setContentText("펀시스템 알리미 앱에서 새로운 프로그램을 확인하세요!");
+        } else {
+            ArrayList<String> containedKeywordsList = new ArrayList<>(containedKeywords);
+            StringBuilder keywordsString = new StringBuilder("\'" + containedKeywordsList.get(0) + "\'");
+            for(String keyword : containedKeywordsList.subList(1,containedKeywordsList.size())){
+                keywordsString.append(", \'").append(keyword).append("\'");
+            }
+            builder.setContentText(keywordsString + " 키워드에 대한 새로운 프로그램이 등록되었습니다.");
+        }
 
         Log.i("ProgramsManagementService", "------------------------------------------------------------newProgramAddedNotification show notification 111");
         if (notificationManager != null) {
