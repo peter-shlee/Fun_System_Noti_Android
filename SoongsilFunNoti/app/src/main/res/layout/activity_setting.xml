@@ -78,7 +78,6 @@
         android:layout_marginTop="3dp"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
-        android:layout_marginBottom="3dp"
         android:layout_weight="1"
         android:background="@color/colorPlate">
 
@@ -120,8 +119,17 @@
             android:paddingBottom="1dp"
             android:background="@color/colorBackground"/>
 
-
-
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginBottom="3dp"
+        android:background="@color/colorPlate"
+        android:gravity="center"
+        android:text="이메일 문의 : shlee4290@gmail.com"
+        android:textSize="10dp" />
 
 </LinearLayout>

@@ -155,16 +155,15 @@ public class SettingActivity extends AppCompatActivity implements CompoundButton
                         final String keyword = keywordArrayList.get(position);
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                        builder.setTitle("키워드 삭제");
-                        builder.setMessage("\n정말 삭제하시겠습니까?");
-                        builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
+                        builder.setTitle("키워드를 삭제하시겠습니까?");
+                        builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 keywordsManager.deleteKeyword(keyword);
                                 resetKeywordRecyclerView();
                             }
                         });
-                        builder.setNegativeButton("아니요", null);
+                        builder.setNegativeButton("취소", null);
 
                         AlertDialog alertDialog = builder.create();
                         alertDialog.show();
