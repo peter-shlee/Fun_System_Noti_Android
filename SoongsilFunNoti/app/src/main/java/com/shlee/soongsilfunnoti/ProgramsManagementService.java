@@ -258,7 +258,7 @@ public class ProgramsManagementService extends Service {
 
         Log.i("ProgramsManagementService", "------------------------------------------------------------newProgramAddedNotification");
 
-        NotificationManager notificationManager = registerNotiChannel("새 프로그램 알림", "특정 키워드가 포함된 새로운 프로그램이 숭실대 펀시스템에 등록되었을 때 알림 합니다.", NotificationManager.IMPORTANCE_HIGH);
+        NotificationManager notificationManager = registerNotiChannel("새 프로그램 알림", "새로운 프로그램이 숭실대 펀시스템에 등록되었을 때 알림 합니다.", NotificationManager.IMPORTANCE_HIGH);
 
         Intent activityIntent = new Intent(this, MainActivity.class); // 알림창 클릭시 호출할 액티비티
         activityIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -47,7 +47,7 @@
                 android:paddingLeft="8dp"
                 android:paddingBottom="8dp"
                 android:visibility="visible"
-                android:textColor="#bebfbf"
+                android:textColor="#6F7070"
                 android:text="OFF"/>
 
         </RelativeLayout>
@@ -112,7 +112,7 @@
                 android:paddingLeft="8dp"
                 android:paddingBottom="8dp"
                 android:visibility="visible"
-                android:textColor="#bebfbf"
+                android:textColor="#6F7070"
                 android:text="키워드 알림만 받습니다"/>
 
         </RelativeLayout>
